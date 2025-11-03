@@ -18,8 +18,11 @@ class Program
 
         // Ask for a grade percentage
         Console.Write("Enter your grade percentage:");
-        string input = Console.ReadLine();
-        int percentage = int.Parse(input);
+        int percentage;
+        while (!int.TryParse(Console.ReadLine(), out percentage))
+        {
+            Console.Write("Invalid input. Please enter a number: ")
+        }
 
         string letter = "";
         string sign = "";
@@ -93,12 +96,16 @@ class Program
         while (guess != magicNumber)
         {
             Console.Write("What is your guess?");
-            guess = int.Parse(Console.ReadLine());
+            while (!int.TryParse(Console.ReadLine(), out guess))
+            {
+                Console.Write("Invalid input. Enter a number: ");
+            }
 
             if (guess < magicNumber)
             {
                 Console.WriteLine("Higher");
             }
+
             else if (guess > magicNumber)
             {
                 Console.WriteLine("Lower");
@@ -107,22 +114,28 @@ class Program
             {
                 Console.WriteLine("You guesssed it!");
             }
+        }
 
-            List<int> numbers = new List<int>();
-            int number;
 
-            Console.WriteLine("Enter a list of numbers, type 0 when finished.");
+        List<int> numbers = new List<int>();
+        int number;
 
-            // Collect numbers until user enters 0
-            do
+        Console.WriteLine("Enter a list of numbers, type 0 when finished.");
+
+        // Collect numbers until user enters 0
+        do
+        {
+            Console.Write("Enter number:");
+            while (!int.TryParse(Console.ReadLine(), out number))
             {
-                Console.Write("Enter number:");
-                number = int.Parse(Console.ReadLine());
+                Console.Write("Invalid input. Enter a number: ");
+            }    
+            
 
-                if (number != 0)
-                {
-                    numbers.Add(number);
-                }
+            if (number != 0)
+            {
+                numbers.Add(number);
+            }
 
             } while (number != 0);
 
@@ -170,25 +183,28 @@ class Program
             return Console.ReadLine();
         }
 
-        static int PromptUserNumber()
+    static int PromptUserNumber()
+    {
+        Console.Write("Please enter your favourite number:");
+        int number;
+        while (!int.TryParse(Console.ReadLine(), out number))
         {
-            Console.Write("Please enter your favourite number:");
-            string input = Console.ReadLine();
-            return int.Parse(input);
+            Console.Write("Invalid input. Enter a number: ");
         }
+        return number;
+    }    
         
-        static int squareNumber(int number)
-        {
-            return number * number;
-        }
-
-        static void DisplayResult(string name, int squareNumber)
-        {
-            Console.WriteLine($"{name},the square of your favourite number is {squareNumber}");
-        }
-
-        }
+    static int squareNumber(int number)
+    {
+        return number * number;
     }
+
+    static void DisplayResult(string name, int squareNumber)
+    {
+        Console.WriteLine($"{name},the square of your favourite number is {squareNumber}");
+    }
+}
+
 
 
 
