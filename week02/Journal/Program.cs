@@ -20,6 +20,7 @@ class Program
 
         while (true)
         {
+            Console.WriteLine("Menu: ");
             Console.WriteLine("1. Write a new entry ");
             Console.WriteLine("2. Display all entries.");
             Console.WriteLine("3. Save journal to file");
@@ -35,7 +36,9 @@ class Program
                     Console.WriteLine($"Prompt: {prompt}");
                     Console.Write("Your response: ");
                     string response = Console.ReadLine();
-                    Entry entry = new Entry(prompt, response);
+                    Console.WriteLine("Optional image path: ");
+                    string imagePath = Console.ReadLine();
+                    Entry entry = new Entry(prompt, response, imagePath);
                     journal.AddEntry(entry);
                     break;
 
@@ -56,6 +59,10 @@ class Program
                     break;
 
                 case "5":
+                    journal.DisplayAchievements();
+                    break;
+
+                case "6":
                     return;
 
                 default:
@@ -92,7 +99,7 @@ public class PromptGenerator
 
 public class Entry
 {
-    public string Date { get; private set; }
+    public string Date { get; set; }
     public string PromptText { get; private set; }
     public sbyte EntryText { get; private set; }
     public string ImagePath { get; private set; }
@@ -114,12 +121,12 @@ public class Entry
             Console.WriteLine($"Image: {ImagePath}");
     }
 
-    public string Entry FromFileFormat(string line)
+    public string ToFileFormatat(string line)
     {
         return $"{Date} | {PromptText} | {EntryText} | {ImagePath}";
     }
 
-    public static Entry fROMfILEfORMAT(String line)
+    public static Entry FromFileFormat(String line)
     {
         string[] parts = line.Split('|');
         return new Entry(parts[1], parts[2], parts.Length > 3 ? parts[3] : "") { Date = parts[0] };
@@ -135,70 +142,83 @@ public class Journal
         _entries.Add(newEntry);
     }
 
-    foreach (Entry entry in _entries)
+    public void DisplayAll()
     {
-        entry.Display();
-    }            
-}
+        if (_entries.Count == 0)
+        {
+            Console.WriteLine("No entries to display.");
+            return;
+        }
 
-public void SaveToFile(string file)
-{
-    using (StreamWriter writer = new StreamWriter(file))
-    {
         foreach (Entry entry in _entries)
         {
-            writer.WriteLine(entry.ToFileFormat());
+            entry.Display();
         }
     }
-    Console.WriteLine("Journal saved successfully.");
-}
 
-public void LoadFromFile(string file)
-{
-    _entries.Clear();
-
-    if (File.Exists(file))
+    public void SaveToFile(string file)
     {
-        string[] lines = File.ReadAllLines(file);
-        foreach (string line in lines)
+        using (StreamWriter writer = new StreamWriter(file))
         {
-            Entry entry = Entry.FromFileFormat(line);
-            _entries.Add(entry);
+            foreach (Entry entry in _entries)
+            {
+                writer.WriteLine(entry.ToFileFormatat());
+            }
+
         }
-        Console.WriteLine("Journal loaded successfully.");
-
+        Console.WriteLine("Journal saved successfuly");
     }
-    else
+
+    public void LoadFromFile(string file)
     {
-        Console.WriteLine("File not found.")
+        _entries.Clear();
+
+        if (File.Exists(file))
+        {
+            string[] lines = File.ReadAllLines(file);
+            foreach (string line in lines)
+            {
+                Entry entry = entry.FromFileFormat(line);
+                _entries.Add(entry);
+            }
+            Console.WriteLine("Journal loaded successfully.");
+        }
+
+        else
+        {
+            Console.WriteLine("File not found.");
+        }
     }
-}
 
-public void DisplayAchievemnets()
-{
-    Console.WriteLine("Your achievements:")
-
-    if (_entries.Count == 0)
+    public void DisplayAchievements()
     {
-        Console.WriteLine("- Fisrt Entry: ✅");
+        Console.WriteLine("Your achievements:");
 
-        int longEntries = _entries.Coint(e => e.EntryText.Length > 200);
+        if (_entries.Count == 0)
+        {
+            Console.WriteLine("- No entries yet.");
+            return;
+        }
+
+        Console.WriteLine("- First Entry: ");
+
+        int longEntries = _entries.Count(e => e.EntryText.Length > 200);
         if (longEntries > 0)
             Console.WriteLine("- Long Entry (200+ characters): ");
 
         int streak = CalculateStreak();
         if (streak >= 3)
-            Console.WriteLine($"- 3-Day Streak:  ({streak} days)");
+            Console.WriteLine($"- 3_day Streak: ({streak}) days");
 
-        Console.WriteLine($"Total Entries: {_entries.Count}");
+        Console.WriteLine($"- Total Entries: {_entries.Count}");
     }
 
-    DisablePrivateReflectionAttribute in CalculateStreak()
+    private int CalculateStreak()
     {
         var dates = _entries
-        .select(e => DateTimeParse(e.Date))
+        .Select(e => DateTime.Parse(e.Date))
         .Distinct()
-        .OrderByDescending(dates => d)
+        .OrderByDescending(d => d)
         .ToList();
 
         int streak = 0;
@@ -206,10 +226,10 @@ public void DisplayAchievemnets()
 
         foreach (var date in dates)
         {
-            if (date == current)
+            if (date.Date == current)
             {
                 streak++;
-                current = currentAddDays(-1);
+                current = current.AddDays(-1);
             }
 
             else
@@ -220,4 +240,6 @@ public void DisplayAchievemnets()
 
         return streak;
     }
+            
 }
+
