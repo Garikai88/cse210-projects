@@ -25,7 +25,8 @@ class Program
             Console.WriteLine("2. Display all entries.");
             Console.WriteLine("3. Save journal to file");
             Console.WriteLine("4. Load journal from file");
-            Console.WriteLine("5. Exit");
+            Console.WriteLine("5. View your achievements.");
+            Console.WriteLine("6. Exit");
             Console.Write("Choose an option: ");
             string choice = Console.ReadLine();
 
@@ -55,7 +56,7 @@ class Program
                 case "4":
                     Console.Write("Enter filename to load: ");
                     string loadFile = Console.ReadLine();
-                    journal.loadFromFile(loadFile);
+                    journal.LoadFromFile(loadFile);
                     break;
 
                 case "5":
@@ -66,7 +67,7 @@ class Program
                     return;
 
                 default:
-                    Console.WriteLine("invalid option. Please try again.");
+                    Console.WriteLine("Invalid option. Please try again.");
                     break;
 
 
@@ -84,7 +85,7 @@ public class PromptGenerator
         "Describe a challenge you overcame recently",
         "What did you achieve today",
         "How are you going to achieve your goals tomorrow?",
-        "What did your experiances for today teach you?",
+        "What did your experiences for today teach you?",
         "What entries would be important for your journal this week?",
 
     };
@@ -101,7 +102,7 @@ public class Entry
 {
     public string Date { get; set; }
     public string PromptText { get; private set; }
-    public sbyte EntryText { get; private set; }
+    public string EntryText { get; private set; }
     public string ImagePath { get; private set; }
 
     public Entry(string promptText, string entryText, string imagePath = "")
@@ -121,7 +122,7 @@ public class Entry
             Console.WriteLine($"Image: {ImagePath}");
     }
 
-    public string ToFileFormatat(string line)
+    public string ToFileFormat()
     {
         return $"{Date} | {PromptText} | {EntryText} | {ImagePath}";
     }
@@ -162,7 +163,7 @@ public class Journal
         {
             foreach (Entry entry in _entries)
             {
-                writer.WriteLine(entry.ToFileFormatat());
+                writer.WriteLine(entry.ToFileFormat());
             }
 
         }
@@ -178,7 +179,7 @@ public class Journal
             string[] lines = File.ReadAllLines(file);
             foreach (string line in lines)
             {
-                Entry entry = entry.FromFileFormat(line);
+                Entry entry = Entry.FromFileFormat(line);
                 _entries.Add(entry);
             }
             Console.WriteLine("Journal loaded successfully.");
@@ -200,15 +201,15 @@ public class Journal
             return;
         }
 
-        Console.WriteLine("- First Entry: ");
+        Console.WriteLine("- First Entry Date: {_entries.OrderBy(e => e.Date).First().Date} ");
 
         int longEntries = _entries.Count(e => e.EntryText.Length > 200);
         if (longEntries > 0)
-            Console.WriteLine("- Long Entry (200+ characters): ");
+            Console.WriteLine("- {Long Entry} Long Entry(ies (200+ characters): ");
 
         int streak = CalculateStreak();
         if (streak >= 3)
-            Console.WriteLine($"- 3_day Streak: ({streak}) days");
+            Console.WriteLine($"- 3-day Streak: ({streak}) days");
 
         Console.WriteLine($"- Total Entries: {_entries.Count}");
     }
