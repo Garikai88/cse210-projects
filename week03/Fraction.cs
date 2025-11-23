@@ -17,23 +17,25 @@ public class Fraction
         denominator = bottom != 0 ? bottom : 1;
     }
 
-    // Getters
+    // Getters, top
     public int GetTop()
     {
         return numerator;
     }
 
+    //Getters, bottom
     public int GetBottom()
     {
         return denominator;
     }
 
-    // Setters
+    // Setters, top
     public void SetTop(int top)
     {
         numerator = top;
     }
 
+    // Setters, bottom
     public void SetBottom(int bottom)
     {
         if (bottom != 0)
